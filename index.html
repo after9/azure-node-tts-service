@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TTS Template</title>
+  </head>
+  <body>
+    <h1>Text to speech</h1>
+    <form action="/tts" method="post">
+      <label for="speechId">Speech Id:</label>
+      <input
+        type="text"
+        id="speechId"
+        name="speechId"
+        placeholder="Enter speech id"
+      />
+      <br />
+      <label for="subcriptionKey">Subscription Key: </label>
+      <input
+        type="text"
+        id="subcriptionKey"
+        name="subcriptionKey"
+        placeholder="Enter your Azure Subscription Key"
+         style="width:300px"
+      />
+      <br />
+      <label for="textContent">Text Content:</label>
+      <br />
+      <textarea
+        id="textContent"
+        name="textContent"
+        rows="8"
+        cols="100"
+      ></textarea>
+      <br />
+      <button type="submit">Convert to Speech</button>
+
+    </form>
+    <div style="margin:30px;">
+      <figure>
+        <figcaption>Listen to the Speech:</figcaption>
+        <audio controls id="speechAudio">
+          <source id="speechAudioSource" src="/speech/0.mp3" />
+        </audio>
+        <a href="/speech/0.mp3" id="speechDownload">Download</a>
+      </figure>
+      <div id="newAudioDiv">
+        <!-- <audio controls id="newSpeechAudio">
+          <source id="newSpeechAudioSource" src="/1.wav" />
+        </audio> -->
+      </div>
+    </div>
+    <script>
+      document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const speechId = document.getElementById('speechId').value;
+        const subcriptionKey = document.getElementById('subcriptionKey').value;
+        const textValue = document.getElementById('textContent').value;
+        
+        // POST request
+        fetch('/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: speechId, key: subcriptionKey, text: textValue, })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Success:', data);
+          //reset the audio src
+          const speechAudio = document.getElementById('speechAudio');
+          const speechAudioSource = document.getElementById('speechAudioSource');
+          const speechDownload = document.getElementById('speechDownload');
+          speechAudioSource.src='/speech/'+data.speechFile;
+          speechDownload.href='/speech/'+data.speechFile;
+          speechAudio.load();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+        
+      })
+    </script>
+  </body>
+</html>
