@@ -19,7 +19,7 @@ router.get('/', async (ctx, next) => {
 })
 
 router.post('/tts', async (ctx, next) => {
-  console.log('ctx.request.body:', ctx.request.body);
+  console.log('ctx.request.body:', ctx.request);
   // got the request parameter
   const { id, key, text } = ctx.request.body;
 
@@ -43,9 +43,9 @@ app
 
 //setting different PORT by NODE_ENV
 if (process.env.NODE_ENV === "production") {
-  process.env.PORT = 3002;
+  process.env.PORT = 8889;
 } else if (process.env.NODE_ENV === "dev") {
-  process.env.PORT = 3001;
+  process.env.PORT = 8888;
 }
 
 app.listen(process.env.PORT, () => {
